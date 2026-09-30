@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia de Estudo — PDS / FBN</title>
+<style>
+  :root{
+    --bg: #101c30;
+    --bg-2: #16233a;
+    --paper: #fbf7ee;
+    --paper-2: #f2ecdb;
+    --ink: #1c2233;
+    --ink-soft: #4b5468;
+    --teal: #1f8f8a;
+    --teal-deep: #135f5c;
+    --amber: #f2b134;
+    --rose: #e8546b;
+    --blue: #3e6fb3;
+    --line: rgba(255,255,255,.08);
+    --radius: 14px;
+    --serif: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background: radial-gradient(1200px 800px at 15% -10%, #1a2c47 0%, var(--bg) 55%);
+    color: var(--paper);
+    font-family: var(--sans);
+    line-height:1.5;
+    padding-bottom: 80px;
+  }
+  a{color:inherit;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding: 48px 24px 28px;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--amber);
+    border: 1px solid rgba(242,177,52,.35);
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(242,177,52,.08);
+  }
+  .hero h1{
+    font-family: var(--serif);
+    font-size: clamp(28px, 5vw, 44px);
+    margin: 18px 0 8px;
+    line-height: 1.1;
+    color: #fff;
+  }
+  .hero p.sub{
+    color: #b9c4d6;
+    max-width: 640px;
+    font-size: 15.5px;
+  }
+  .tldr{
+    margin-top: 22px;
+    background: linear-gradient(135deg, rgba(31,143,138,.16), rgba(31,143,138,.04));
+    border: 1px solid rgba(31,143,138,.35);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .tldr h2{
+    margin:0 0 8px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--amber);
+  }
+  .tldr p{ margin: 0; color: #eef2f7; font-size: 15px; }
+
+  /* ---------- NAV ---------- */
+  .nav{
+    max-width: 980px;
+    margin: 22px auto 0;
+    padding: 0 24px;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .nav a{
+    text-decoration:none;
+    font-size:13px;
+    font-family: var(--mono);
+    color:#cdd6e4;
+    background: var(--bg-2);
+    border:1px solid var(--line);
+    padding:7px 12px;
+    border-radius:999px;
+    transition: all .15s ease;
+  }
+  .nav a:hover{ background:#1e3253; color:#fff; border-color:rgba(255,255,255,.2); }
+
+  /* ---------- SECTIONS ---------- */
+  main{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  section{
+    margin-top: 46px;
+    scroll-margin-top: 20px;
+  }
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    margin-bottom: 16px;
+  }
+  .section-num{
+    font-family: var(--mono);
+    color: var(--teal);
+    font-size: 13px;
+    border: 1px solid rgba(31,143,138,.4);
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+  h2.title{
+    font-family: var(--serif);
+    font-size: 26px;
+    margin:0;
+    color:#fff;
+  }
+  .hint{
+    color:#8fa0b8;
+    font-size: 13.5px;
+    margin: -8px 0 16px;
+  }
+
+  /* ---------- CARD GRID (glossário) ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 12px;
+  }
+  .card{
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: var(--radius);
+    padding: 16px 16px 14px;
+    border-bottom: 4px solid var(--teal);
+  }
+  .card h3{
+    margin:0 0 6px;
+    font-size: 15px;
+    font-family: var(--serif);
+  }
+  .card p{ margin:0; font-size: 13.5px; color: var(--ink-soft); }
+
+  /* ---------- FLASHCARDS (flip) ---------- */
+  .flash-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap:14px;
+  }
+  .flash{
+    perspective: 1000px;
+    height: 130px;
+    cursor:pointer;
+  }
+  .flash-inner{
+    position:relative;
+    width:100%; height:100%;
+    text-align:center;
+    transition: transform .5s;
+    transform-style: preserve-3d;
+  }
+  .flash.flipped .flash-inner{ transform: rotateY(180deg); }
+  .flash-face{
+    position:absolute; inset:0;
+    backface-visibility: hidden;
+    border-radius: var(--radius);
+    display:flex; align-items:center; justify-content:center;
+    padding: 14px;
+    font-size: 14px;
+  }
+  .flash-front{
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    color: #fff;
+    font-family: var(--serif);
+    font-size: 16px;
+  }
+  .flash-back{
+    background: var(--teal);
+    color: #06231f;
+    transform: rotateY(180deg);
+    font-size: 13px;
+  }
+  .flash-tip{
+    text-align:center;
+    font-size:12px;
+    color:#8fa0b8;
+    margin-top:10px;
+    font-family: var(--mono);
+  }
+
+  /* ---------- ROLES (accordion) ---------- */
+  .acc{
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow:hidden;
+    margin-bottom: 10px;
+    background: var(--bg-2);
+  }
+  .acc-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding: 13px 16px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .acc-head:hover{ background: rgba(255,255,255,.03); }
+  .acc-tag{
+    font-family: var(--mono);
+    font-size: 10.5px;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-right:10px;
+  }
+  .tag-contrato{ background: rgba(62,111,179,.2); color:#8fb4f0; border:1px solid rgba(62,111,179,.4); }
+  .tag-negocio{ background: rgba(31,143,138,.2); color:#6fdbd3; border:1px solid rgba(31,143,138,.4); }
+  .tag-tecnico{ background: rgba(242,177,52,.18); color:#f2c766; border:1px solid rgba(242,177,52,.4); }
+  .acc-title{ font-weight:600; font-size: 14.5px; flex:1; }
+  .acc-arrow{ transition: transform .2s; color:#8fa0b8; }
+  .acc.open .acc-arrow{ transform: rotate(180deg); }
+  .acc-body{
+    max-height:0;
+    overflow:hidden;
+    transition: max-height .25s ease;
+  }
+  .acc.open .acc-body{ max-height: 400px; }
+  .acc-body ul{
+    margin:0; padding: 4px 20px 16px 32px;
+    font-size: 13.5px;
+    color:#cdd6e4;
+  }
+  .acc-body li{ margin-bottom:5px; }
+
+  /* ---------- TIMELINE (etapas) ---------- */
+  .timeline{
+    position:relative;
+    padding-left: 26px;
+    border-left: 2px dashed rgba(255,255,255,.15);
+  }
+  .tl-group{
+    margin-bottom: 26px;
+    position:relative;
+  }
+  .tl-group::before{
+    content:'';
+    position:absolute;
+    left:-32px;
+    top:4px;
+    width:14px; height:14px;
+    border-radius:50%;
+    background: var(--amber);
+    box-shadow: 0 0 0 4px rgba(242,177,52,.15);
+  }
+  .tl-group h3{
+    font-family: var(--serif);
+    color:#fff;
+    font-size:18px;
+    margin: 0 0 4px;
+  }
+  .tl-group p.desc{ color:#9fb0c6; font-size:13.5px; margin:0 0 10px; }
+  .tl-steps{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .tl-step{
+    background: var(--bg-2);
+    border:1px solid var(--line);
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    color:#dfe6f0;
+  }
+
+  /* ---------- ALERT / PEGADINHAS ---------- */
+  .alert{
+    background: linear-gradient(135deg, rgba(232,84,107,.14), rgba(232,84,107,.03));
+    border: 1px solid rgba(232,84,107,.35);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom:10px;
+    font-size: 13.5px;
+    color:#ffe3e8;
+  }
+  .alert b{ color: #ff8fa0; }
+
+  /* ---------- KANBAN mini (signature) ---------- */
+  .kanban{
+    display:grid;
+    grid-auto-flow:column;
+    grid-auto-columns: 150px;
+    gap:10px;
+    overflow-x:auto;
+    padding: 4px 4px 14px;
+  }
+  .kcol{
+    background: var(--bg-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px;
+    font-size:11.5px;
+  }
+  .kcol h4{
+    margin:0 0 8px;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    color:var(--amber);
+  }
+  .kcol .chip{
+    background: rgba(255,255,255,.05);
+    border-radius:6px;
+    padding:6px 7px;
+    margin-bottom:6px;
+    color:#cdd6e4;
+  }
+
+  /* ---------- CHECKLIST ---------- */
+  .checklist{
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .check-item{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    background: var(--bg-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding: 10px 14px;
+    cursor:pointer;
+    font-size:13.5px;
+    color:#dfe6f0;
+  }
+  .check-item input{ margin-top:3px; accent-color: var(--teal); width:16px; height:16px; }
+  .check-item.done{ opacity:.45; text-decoration: line-through; }
+  .progress-wrap{
+    margin-top:14px;
+    background: var(--bg-2);
+    border-radius:999px;
+    height:10px;
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .progress-bar{
+    height:100%;
+    background: linear-gradient(90deg, var(--teal), var(--amber));
+    width:0%;
+    transition: width .3s ease;
+  }
+  .progress-label{ font-size:12px; color:#8fa0b8; margin-top:6px; font-family: var(--mono); }
+
+  /* ---------- ACTIVITIES ---------- */
+  .act-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+    gap:12px;
+  }
+  .act-card{
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .act-card .icon{
+    width:34px; height:34px;
+    border-radius:9px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:17px;
+    margin-bottom:10px;
+  }
+  .act-card h3{ margin:0 0 6px; font-size:15px; font-family: var(--serif); }
+  .act-card p{ margin:0; font-size:13px; color:var(--ink-soft); }
+
+  footer{
+    max-width:980px; margin: 50px auto 0; padding: 20px 24px;
+    color:#5c6a82; font-size:12px; text-align:center;
+    border-top:1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="eyebrow">● Guia rápido de estudo</span>
+  <h1>Processo de Desenvolvimento de Software (PDS) — FBN</h1>
+  <p class="sub">Resumo do documento oficial da Fundação Biblioteca Nacional, quebrado em pedaços pequenos pra facilitar o foco. Clica, expande, marca o que já revisou — no seu ritmo.</p>
+
+  <div class="tldr">
+    <h2>Resumo em 4 linhas</h2>
+    <p>O PDS diz como a FBN e a empresa contratada devem trabalhar juntas pra criar/manter sistemas. A base é o <b>Scrum</b>. Existe um time misto (contrato + negócio + técnico), o trabalho roda em <b>Sprints de até 15 dias</b>, e cada entrega passa por planejamento → execução → entrega, sempre registrada num board (tipo Trello/Jira).</p>
+  </div>
+</div>
+
+<div class="nav">
+  <a href="#conceitos">1 · Conceitos</a>
+  <a href="#papeis">2 · Papéis</a>
+  <a href="#time">3 · Composição do time</a>
+  <a href="#etapas">4 · Etapas</a>
+  <a href="#board">5 · Board</a>
+  <a href="#requisitos">6 · Requisitos</a>
+  <a href="#artefatos">7 · Artefatos</a>
+  <a href="#regras">8 · Regras-chave</a>
+  <a href="#pronto">9 · Definição de Pronto</a>
+  <a href="#aceitacao">10 · Aceitação do serviço</a>
+  <a href="#sustentacao">11 · Sustentação</a>
+  <a href="#pegadinhas">12 · Pegadinhas</a>
+  <a href="#atividades">13 · Como estudar</a>
+  <a href="#checklist">14 · Checklist</a>
+</div>
+
+<main>
+
+  <!-- 1. CONCEITOS -->
+  <section id="conceitos">
+    <div class="section-head">
+      <span class="section-num">01</span>
+      <h2 class="title">Conceitos-base (glossário)</h2>
+    </div>
+    <p class="hint">Esses termos aparecem o tempo todo no documento — vale decorar a ideia central de cada um, não a definição decoreba.</p>
+    <div class="grid">
+      <div class="card"><h3>História de usuário</h3><p>Descrição curta de uma funcionalidade, contada do ponto de vista de quem usa. Ex: "Como admin, quero editar usuários".</p></div>
+      <div class="card"><h3>Incremento</h3><p>Pedaço novo e funcional do sistema, entregue a cada iteração/Sprint.</p></div>
+      <div class="card"><h3>Release</h3><p>Entrega de um conjunto de funcionalidades — pode juntar mais de uma Sprint.</p></div>
+      <div class="card"><h3>Stakeholder</h3><p>Qualquer pessoa/organização com interesse no software (cliente, gestor, usuário).</p></div>
+      <div class="card"><h3>Time-box</h3><p>Prazo fixo pra uma atividade acontecer — evita que ela se arraste pra sempre.</p></div>
+      <div class="card"><h3>Product Owner (PO)</h3><p>Representa o negócio, define prioridades do que será desenvolvido.</p></div>
+      <div class="card"><h3>Roadmap</h3><p>Visão geral e de longo prazo do produto — o "mapa da jornada".</p></div>
+      <div class="card"><h3>Backlog do Produto</h3><p>Lista ordenada de tudo que falta fazer no sistema (a origem de tudo).</p></div>
+      <div class="card"><h3>Scrum</h3><p>O framework ágil usado como base de todo o processo do PDS.</p></div>
+      <div class="card"><h3>Sprint</h3><p>Ciclo de trabalho de até 15 dias que gera um incremento pronto.</p></div>
+    </div>
+
+    <p class="flash-tip">↓ clica nos cards abaixo pra virar e testar se você lembra</p>
+    <div class="flash-grid" id="flashGrid"></div>
+  </section>
+
+  <!-- 2. PAPÉIS -->
+  <section id="papeis">
+    <div class="section-head">
+      <span class="section-num">02</span>
+      <h2 class="title">Papéis e responsabilidades</h2>
+    </div>
+    <p class="hint">São muitos papéis — a dica é agrupar por "time": <span style="color:#8fb4f0">azul = lado do contrato/gestão</span>, <span style="color:#6fdbd3">verde = lado do negócio/PO</span>, <span style="color:#f2c766">amarelo = time técnico</span>. Clica pra abrir cada um.</p>
+    <div id="accWrap"></div>
+  </section>
+
+  <!-- 3. COMPOSIÇÃO DO TIME -->
+  <section id="time">
+    <div class="section-head">
+      <span class="section-num">03</span>
+      <h2 class="title">Composição do time (alocação mínima)</h2>
+    </div>
+    <p class="hint">O documento define quantas pessoas de cada função são esperadas, e quantos projetos cada uma pode acumular. Nenhum <b>Desenvolvedor</b> pode ser compartilhado entre projetos.</p>
+    <div class="grid">
+      <div class="card"><h3>Scrum Master</h3><p>1 pessoa · até 9 projetos</p></div>
+      <div class="card"><h3>Product Owner Externo</h3><p>1 pessoa · até 9 projetos</p></div>
+      <div class="card"><h3>Analista de Negócios</h3><p>2 pessoas · até 4 projetos</p></div>
+      <div class="card"><h3>Desenvolvedor</h3><p>5 pessoas · até 7 projetos <br><small>(função nunca compartilhada entre projetos)</small></p></div>
+      <div class="card"><h3>Designer UX/UI</h3><p>2 pessoas · até 3 projetos</p></div>
+      <div class="card"><h3>Analista de Teste</h3><p>4 pessoas · até 5 projetos</p></div>
+      <div class="card"><h3>DevOps</h3><p>3 pessoas · até 4 projetos</p></div>
+      <div class="card"><h3>Arquiteto de Software</h3><p>1 pessoa · até 2 projetos</p></div>
+    </div>
+  </section>
+
+  <!-- 4. ETAPAS -->
+  <section id="etapas">
+    <div class="section-head">
+      <span class="section-num">04</span>
+      <h2 class="title">As 3 grandes etapas do processo</h2>
+    </div>
+    <p class="hint">O processo inteiro cabe em 3 blocos. Decore a ordem, não os detalhes miúdos de cada atividade.</p>
+    <div class="timeline">
+      <div class="tl-group">
+        <h3>1º · Planejamento</h3>
+        <p class="desc">Entender a necessidade do negócio e construir a visão do produto.</p>
+        <div class="tl-steps">
+          <span class="tl-step">Kick-off</span>
+          <span class="tl-step">Mapear processo de negócio</span>
+          <span class="tl-step">Construir Visão do Produto</span>
+          <span class="tl-step">Validar Visão</span>
+          <span class="tl-step">Criar Backlog do Produto</span>
+        </div>
+      </div>
+      <div class="tl-group">
+        <h3>2º · Execução</h3>
+        <p class="desc">Onde o time realmente "roda" a Sprint e produz o incremento.</p>
+        <div class="tl-steps">
+          <span class="tl-step">Sprint Planning</span>
+          <span class="tl-step">Daily Scrum</span>
+          <span class="tl-step">Executar Iteração</span>
+          <span class="tl-step">Realizar Testes</span>
+        </div>
+      </div>
+      <div class="tl-group">
+        <h3>3º · Entrega</h3>
+        <p class="desc">Mostrar o resultado pro cliente e aprender pra próxima Sprint.</p>
+        <div class="tl-steps">
+          <span class="tl-step">Sprint Review</span>
+          <span class="tl-step">Refinar Backlog</span>
+          <span class="tl-step">Sprint Retrospective</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. BOARD -->
+  <section id="board">
+    <div class="section-head">
+      <span class="section-num">05</span>
+      <h2 class="title">O board de desenvolvimento</h2>
+    </div>
+    <p class="hint">O documento mostra um quadro (tipo Kanban) por onde o item do backlog "viaja" até virar entrega. Versão simplificada:</p>
+    <div class="kanban">
+      <div class="kcol"><h4>Backlog</h4><div class="chip">Itens do produto</div><div class="chip">Priorizados pelo PO</div></div>
+      <div class="kcol"><h4>P/ Desenvolvimento</h4><div class="chip">Entrou na Sprint</div></div>
+      <div class="kcol"><h4>Codificação</h4><div class="chip">Dev codando</div></div>
+      <div class="kcol"><h4>Code Review</h4><div class="chip">Checagem de qualidade</div></div>
+      <div class="kcol"><h4>Teste Dev</h4><div class="chip">Testado pelo próprio time</div></div>
+      <div class="kcol"><h4>Em Testes</h4><div class="chip">Analista de Testes valida</div></div>
+      <div class="kcol"><h4>Homologação</h4><div class="chip">Cliente valida a entrega</div></div>
+    </div>
+  </section>
+
+  <!-- 6. REQUISITOS -->
+  <section id="requisitos">
+    <div class="section-head">
+      <span class="section-num">06</span>
+      <h2 class="title">Tipos de item no backlog (requisitos)</h2>
+    </div>
+    <p class="hint">4 siglas — costuma cair em prova exatamente assim:</p>
+    <div class="grid">
+      <div class="card" style="border-bottom-color:var(--teal)"><h3>HU — História de Usuário</h3><p>Uma funcionalidade nova, contada na perspectiva do usuário.</p></div>
+      <div class="card" style="border-bottom-color:var(--blue)"><h3>TE — Tecnologia</h3><p>Requisito não-funcional (ex: performance, segurança, rotina automática).</p></div>
+      <div class="card" style="border-bottom-color:var(--amber)"><h3>ME — Melhoria</h3><p>Ajuste em algo que já foi entregue e está em produção/homologação.</p></div>
+      <div class="card" style="border-bottom-color:var(--rose)"><h3>DE — Defeito</h3><p>Bug: algo entregue que não está funcionando como deveria.</p></div>
+    </div>
+  </section>
+
+  <!-- 7. ARTEFATOS -->
+  <section id="artefatos">
+    <div class="section-head">
+      <span class="section-num">07</span>
+      <h2 class="title">Artefatos do projeto e repositório</h2>
+    </div>
+    <p class="hint">O documento não detalha cada artefato aqui — ele aponta pra outro documento (a MDSa/FBN). O que importa memorizar dessa parte:</p>
+    <div class="grid">
+      <div class="card"><h3>📚 Onde estão definidos</h3><p>Os artefatos do projeto (documentos, templates etc.) estão definidos na <b>Metodologia de Desenvolvimento de Software Ágil (MDSa/FBN)</b>, não no PDS em si.</p></div>
+      <div class="card"><h3>🗂️ Repositório</h3><p>A <b>CONTRATADA</b> é responsável por manter o repositório de artefatos sempre atualizado, usando um gerenciador de repositório de software (ex: Git, Jira, Azure DevOps).</p></div>
+    </div>
+  </section>
+
+  <!-- 8. REGRAS -->
+  <section id="regras">
+    <div class="section-head">
+      <span class="section-num">08</span>
+      <h2 class="title">Regras e números que costumam cair</h2>
+    </div>
+    <div class="grid">
+      <div class="card"><h3>⏱ Duração da Sprint</h3><p>Até <b>15 dias corridos</b>. No fim, um incremento pronto é apresentado ao cliente.</p></div>
+      <div class="card"><h3>📄 Abertura de demanda</h3><p>Todo novo projeto/sustentação começa com uma <b>Ordem de Serviço (OS)</b>.</p></div>
+      <div class="card"><h3>🚀 Ir pra produção</h3><p>Só depois de uma <b>Requisição de Mudança (RDM)</b> aprovada pelo comitê de Gestão de Mudança.</p></div>
+      <div class="card"><h3>✅ 3 tipos de aceitação</h3><p>Rejeição (defeito impeditivo) · Aceitação parcial (defeito não-impeditivo) · Aceitação integral (sem defeitos relevantes).</p></div>
+    </div>
+  </section>
+
+  <!-- 9. DEFINIÇÃO DE PRONTO -->
+  <section id="pronto">
+    <div class="section-head">
+      <span class="section-num">09</span>
+      <h2 class="title">Definição de Pronto (o que precisa existir pra um incremento "contar")</h2>
+    </div>
+    <p class="hint">São os critérios mínimos que a CONTRATANTE (FBN) exige da CONTRATADA pra considerar um incremento pronto:</p>
+    <div class="grid">
+      <div class="card"><h3>💾 Versionamento</h3><p>Código-fonte submetido ao controle de versões da CONTRATADA.</p></div>
+      <div class="card"><h3>🧪 Testes unitários</h3><p>Existência de testes unitários, com evidências.</p></div>
+      <div class="card"><h3>🗄️ Scripts de banco</h3><p>Scripts de BD com dicionário de dados nos metadados (só não precisa se não houve mudança no modelo de dados).</p></div>
+      <div class="card"><h3>📦 Build</h3><p>Existência de arquivo para geração de Build.</p></div>
+    </div>
+  </section>
+
+  <!-- 10. ACEITAÇÃO DO SERVIÇO -->
+  <section id="aceitacao">
+    <div class="section-head">
+      <span class="section-num">10</span>
+      <h2 class="title">Critérios de aceitação do serviço</h2>
+    </div>
+    <p class="hint">Diferente da "Definição de Pronto" (que é sobre o incremento técnico), aqui é sobre quando o <b>serviço como um todo</b> é considerado entregue:</p>
+    <div class="grid">
+      <div class="card"><h3>🎯 Escopo completo</h3><p>Cobertura integral do escopo de funcionalidades planejadas.</p></div>
+      <div class="card"><h3>🧪 Cobertura de testes</h3><p>Cobertura mínima de testes unitários.</p></div>
+      <div class="card"><h3>🏅 Qualidade do código</h3><p>Qualidade mínima aferida por ferramenta, conforme critérios pré-estabelecidos.</p></div>
+      <div class="card"><h3>🏗️ Padrões arquiteturais</h3><p>Aderência aos padrões arquiteturais e tecnológicos definidos.</p></div>
+      <div class="card"><h3>🔒 Segurança</h3><p>Observância aos padrões de segurança da informação e desenvolvimento seguro.</p></div>
+    </div>
+  </section>
+
+  <!-- 11. SUSTENTAÇÃO -->
+  <section id="sustentacao">
+    <div class="section-head">
+      <span class="section-num">11</span>
+      <h2 class="title">Desenvolvimento e sustentação de sistemas</h2>
+    </div>
+    <p class="hint">Essa parte final do documento fala do serviço "pós-entrega" — manter os sistemas já em produção funcionando bem.</p>
+    <div class="grid">
+      <div class="card"><h3>🛠️ Objetivo principal</h3><p>Garantir o bom funcionamento dos sistemas em produção, detectando falhas e problemas de segurança.</p></div>
+      <div class="card"><h3>♻️ Melhoria contínua</h3><p>Não é só "consertar" — é um processo contínuo de melhoria de um software já existente.</p></div>
+      <div class="card"><h3>📊 Diretrizes</h3><p>Informações precisas pra decisão, automação de processos, integração/migração de sistemas legados, e novos modelos de negócio baseados em tecnologia (ex: e-learning).</p></div>
+    </div>
+  </section>
+
+  <!-- 12. PEGADINHAS -->
+  <section id="pegadinhas">
+    <div class="section-head">
+      <span class="section-num">12</span>
+      <h2 class="title">Pontos que confundem (atenção aqui)</h2>
+    </div>
+    <div class="alert"><b>PO Negocial ≠ PO Externo.</b> O documento tem DOIS "Product Owners": um é servidor da FBN (lado do negócio, valida entregas) e outro é da CONTRATADA/lado técnico (cria e mantém o backlog do dia a dia). Não são a mesma pessoa.</div>
+    <div class="alert"><b>Gestor, Fiscal Técnico e Fiscal Administrativo</b> são 3 papéis diferentes do lado da FBN — todos "servidores", mas com focos diferentes (orçamento/contrato · faturamento/critérios técnicos · sanções administrativas).</div>
+    <div class="alert"><b>Sprint Retrospective ≠ Sprint Review.</b> Review é pra mostrar o incremento pro cliente. Retrospective é o time olhando pra si mesmo (o que travou, o que melhorar).</div>
+    <div class="alert"><b>Backlog do Produto ≠ Backlog da Sprint.</b> O primeiro é a lista geral e infinita. O segundo é o recorte que entrou na Sprint atual (saída da atividade "Sprint Planning").</div>
+    <div class="alert"><b>Definição de Pronto ≠ Critérios de Aceitação do Serviço.</b> "Pronto" é sobre o incremento técnico (código versionado, testes, scripts de BD, build). "Aceitação" é sobre o serviço inteiro (escopo, qualidade, arquitetura, segurança). São duas listas diferentes no documento.</div>
+  </section>
+
+  <!-- 13. ATIVIDADES -->
+  <section id="atividades">
+    <div class="section-head">
+      <span class="section-num">13</span>
+      <h2 class="title">Sugestões de como estudar isso (pensado pra TDAH)</h2>
+    </div>
+    <div class="act-grid">
+      <div class="act-card">
+        <div class="icon" style="background:#e6f4f3;">⏳</div>
+        <h3>Blocos de 20-25 min</h3>
+        <p>Estuda 1 seção só (ex: só "Papéis") por sessão. Pausa curta antes de ir pra próxima. Não tenta o documento inteiro de uma vez.</p>
+      </div>
+      <div class="act-card">
+        <div class="icon" style="background:#fdeee0;">🗣️</div>
+        <h3>Ensina em voz alta</h3>
+        <p>Explica as 3 etapas (Planejamento/Execução/Entrega) como se estivesse explicando pra um colega, sem olhar o texto. Se travar, foi ali que precisa reforçar.</p>
+      </div>
+      <div class="act-card">
+        <div class="icon" style="background:#fdecee;">🃏</div>
+        <h3>Flashcards físicos</h3>
+        <p>Pega os 4 tipos de requisito (HU/TE/ME/DE) e os 4 conceitos que mais confundem e faz cartões de papel — mais tátil que a tela ajuda a fixar.</p>
+      </div>
+      <div class="act-card">
+        <div class="icon" style="background:#eef1fb;">🧩</div>
+        <h3>Desenha o board</h3>
+        <p>Redesenha o Kanban da seção 5 de memória, numa folha. Comparar o que esqueceu é mais eficaz que reler.</p>
+      </div>
+      <div class="act-card">
+        <div class="icon" style="background:#fff6df;">🎯</div>
+        <h3>Foca no que cai</h3>
+        <p>Se for pra prova/trabalho, prioriza: Sprint = 15 dias, os 3 grupos de etapas, e a diferença PO Negocial x PO Externo. É o que mais confunde.</p>
+      </div>
+      <div class="act-card">
+        <div class="icon" style="background:#e9f7ee;">🔁</div>
+        <h3>Revisão espaçada</h3>
+        <p>Revê esse resumo hoje, de novo em 2 dias, e de novo em 1 semana — em vez de reler tudo uma vez só e esquecer.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14. CHECKLIST -->
+  <section id="checklist">
+    <div class="section-head">
+      <span class="section-num">14</span>
+      <h2 class="title">Checklist de revisão</h2>
+    </div>
+    <p class="hint">Marca conforme for revisando — dá aquele senso de progresso.</p>
+    <div class="checklist" id="checklistWrap"></div>
+    <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 0 revisados</div>
+  </section>
+
+</main>
+
+<footer>Resumo de estudo baseado no PDS (Processo de Desenvolvimento de Software) — Fundação Biblioteca Nacional, jul/2024. Feito pra revisão rápida, não substitui a leitura do documento original.</footer>
+
+<script>
+  // FLASHCARDS
+  const flashData = [
+    ["User Story", "Funcionalidade contada do ponto de vista do usuário. Ex: 'Como admin, quero...'"],
+    ["Time-box", "Prazo fixo pra garantir que uma atividade não se arraste."],
+    ["Backlog do Produto", "Lista ordenada com TUDO que falta ser feito no sistema."],
+    ["Sprint", "Ciclo de até 15 dias que termina com um incremento pronto."],
+    ["Product Owner", "Quem prioriza o que entra no backlog e representa o negócio."],
+    ["Incremento", "Pedaço novo e funcional entregue ao final de cada Sprint."],
+  ];
+  const flashGrid = document.getElementById('flashGrid');
+  flashData.forEach(([front, back]) => {
+    const el = document.createElement('div');
+    el.className = 'flash';
+    el.innerHTML = `
+      <div class="flash-inner">
+        <div class="flash-face flash-front">${front}</div>
+        <div class="flash-face flash-back">${back}</div>
+      </div>`;
+    el.addEventListener('click', () => el.classList.toggle('flipped'));
+    flashGrid.appendChild(el);
+  });
+
+  // PAPÉIS (accordion)
+  const roles = [
+    ["contrato","Gestor do Contrato", ["Servidor da FBN","Avalia demandas do Comitê de Governança Digital","Solicita serviço à Coordenação de TI","Gestão orçamentária com a CONTRATADA"]],
+    ["contrato","Fiscal Técnico do Contrato", ["Trata faturamento dos projetos","Valida critérios de priorização e riscos"]],
+    ["contrato","Fiscal Administrativo do Contrato", ["Trata faturamento","Trata sanções administrativas","Monitora cláusulas contratuais"]],
+    ["negocio","Dono do Produto Negocial (PO)", ["Servidor da área requisitante","Valida artefatos e homologa entregas","Gestão do Product Backlog junto ao PO externo"]],
+    ["negocio","Dono do Produto Externo (PO)", ["Cria e comunica a visão do produto","Define o roadmap","Cria e prioriza o backlog do produto"]],
+    ["tecnico","Gerente de Projetos", ["Mensura faturamento por serviço","Gerencia recursos humanos do contrato","Prioriza demandas de projeto e sustentação"]],
+    ["tecnico","Scrum Master", ["Implementa o Scrum","Remove impedimentos do time","Garante cumprimento dos eventos Scrum"]],
+    ["tecnico","Desenvolvedor", ["Cria incremento utilizável a cada Sprint","Monta o Sprint Backlog","Segue a Definition of Done"]],
+    ["tecnico","Analista de Teste", ["Garante qualidade do incremento","Gera evidências de teste"]],
+    ["tecnico","Designer UX/UI", ["Pesquisa necessidades do usuário","Cuida da usabilidade e responsividade"]],
+    ["tecnico","DevOps", ["Automatiza deploys e infraestrutura","Monitora desempenho e segurança"]],
+    ["tecnico","Analista de Negócios", ["Mapeia processos de negócio","Propõe soluções e avalia viabilidade"]],
+    ["tecnico","Arquiteto de Software", ["Define a arquitetura do sistema","Escolhe tecnologias e cria diagramas UML"]],
+  ];
+  const tagLabel = {contrato:"Contrato/Gestão", negocio:"Negócio/PO", tecnico:"Time técnico"};
+  const accWrap = document.getElementById('accWrap');
+  roles.forEach(([group, title, items]) => {
+    const acc = document.createElement('div');
+    acc.className = 'acc';
+    acc.innerHTML = `
+      <div class="acc-head">
+        <span class="acc-tag tag-${group}">${tagLabel[group]}</span>
+        <span class="acc-title">${title}</span>
+        <span class="acc-arrow">▾</span>
+      </div>
+      <div class="acc-body"><ul>${items.map(i=>`<li>${i}</li>`).join('')}</ul></div>
+    `;
+    acc.querySelector('.acc-head').addEventListener('click', () => acc.classList.toggle('open'));
+    accWrap.appendChild(acc);
+  });
+
+  // CHECKLIST
+  const checklistItems = [
+    "Sei explicar o que é Scrum, Sprint e Backlog do Produto",
+    "Sei a diferença entre PO Negocial e PO Externo",
+    "Sei citar as 3 grandes etapas do processo em ordem",
+    "Sei os 4 tipos de item no backlog (HU, TE, ME, DE)",
+    "Sei quanto tempo dura uma Sprint e o que acontece no fim dela",
+    "Sei diferenciar Sprint Review de Sprint Retrospective",
+    "Sei o que é a Ordem de Serviço (OS) e pra que serve",
+    "Sei o que é a Requisição de Mudança (RDM)",
+    "Sei os 3 tipos de avaliação da demanda (rejeição, parcial, integral)",
+    "Sei quantas pessoas mínimas cada função do time deve ter",
+    "Sei os 4 critérios da Definição de Pronto",
+    "Sei os 5 critérios de Aceitação do Serviço",
+    "Sei explicar o que é o serviço de Sustentação de Sistemas",
+  ];
+  const checklistWrap = document.getElementById('checklistWrap');
+  const progressBar = document.getElementById('progressBar');
+  const progressLabel = document.getElementById('progressLabel');
+
+  function updateProgress(){
+    const total = checklistItems.length;
+    const done = checklistWrap.querySelectorAll('input:checked').length;
+    progressBar.style.width = (done/total*100) + '%';
+    progressLabel.textContent = `${done} / ${total} revisados`;
+  }
+
+  checklistItems.forEach((text, idx) => {
+    const item = document.createElement('label');
+    item.className = 'check-item';
+    item.innerHTML = `<input type="checkbox" id="chk${idx}"><span>${text}</span>`;
+    const input = item.querySelector('input');
+    input.addEventListener('change', () => {
+      item.classList.toggle('done', input.checked);
+      updateProgress();
+    });
+    checklistWrap.appendChild(item);
+  });
+  updateProgress();
+</script>
+
+</body>
+</html>
